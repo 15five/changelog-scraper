@@ -30,11 +30,6 @@ query GetFilesQuery($owner: String!, $repo: String!) {
 # want to play around with above? Try https://docs.github.com/en/graphql/overview/explorer
 
 
-def get_main_branch(url):
-    with urllib.request.urlopen(url) as u:
-        return json.loads(u.read().decode())['default_branch']
-
-
 def get_root_file_names(org_or_user, repo, token):
     variables = {"owner": org_or_user, "repo": repo}
     payload = {"query": graphql_root_files_query, "variables": variables}
