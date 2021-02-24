@@ -6,12 +6,6 @@ from time import sleep
 from urllib.request import urlopen
 
 
-def mock_get_pypi_json():
-    """ for testing """
-    with open('mock_pypi_response.json') as f:
-        return json.loads(f.read())
-
-
 def get_pypi_json(package_name):
     with urlopen(f'https://pypi.org/pypi/{package_name}/json') as u:
         return json.loads(u.read().decode())
