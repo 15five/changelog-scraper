@@ -40,7 +40,7 @@ jobs:
           name: lint
           command: |
             . venv/bin/activate
-            make lint
+            black --check .
   test-python:
     parameters:
       version:
