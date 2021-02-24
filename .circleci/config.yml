@@ -51,11 +51,18 @@ jobs:
       - image: circleci/python:<< parameters.version >>
     steps:
       - checkout
+      - restore_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
       - run:
           name: install python dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            pip install -r dev-requirements.pip
+      - save_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+          paths:
+            - "venv"
       - run:
           name: run tests
           command: |
