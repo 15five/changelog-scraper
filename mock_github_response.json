@@ -1,0 +1,126 @@
+{
+    "data": {
+        "repository": {
+            "object": {
+                "entries": [
+                    {
+                        "name": ".bumpversion.cfg",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".cookiecutterrc",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".coveragerc",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".dockerignore",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".editorconfig",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".github",
+                        "type": "tree"
+                    },
+                    {
+                        "name": ".gitignore",
+                        "type": "blob"
+                    },
+                    {
+                        "name": ".pre-commit-config.yaml",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "CONTRIBUTING.rst",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "CONTRIBUTORS.txt",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "Changelog.rst",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "LICENSE",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "MANIFEST.in",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "Makefile",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "README.rst",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "TODO",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "appveyor.yml",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "bandit.json",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "celery",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "docker",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "docs",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "examples",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "extra",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "pyproject.toml",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "requirements",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "setup.cfg",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "setup.py",
+                        "type": "blob"
+                    },
+                    {
+                        "name": "t",
+                        "type": "tree"
+                    },
+                    {
+                        "name": "tox.ini",
+                        "type": "blob"
+                    }
+                ]
+            }
+        }
+    }
+}
