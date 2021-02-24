@@ -7,6 +7,7 @@ from pathlib import Path
 from sys import stdin
 from time import sleep
 
+verbosity = 0
 target_files = [
     'CHANGELOG',
     'CHANGES',
@@ -53,7 +54,17 @@ def get_root_file_names(org_or_user, repo, token):
         return [entry['name'] for entry in entries if entry['type'] == "blob"]
 
 
-def print_urls(token, output_dir=None):
+def get_urls(f, token, output_dir=None):
+    """yields a changelog link for each repo link in f
+
+    Args:
+        f (Iterable[str]): any iterable yielding repo links. Ex: ['https://github.com/15five/changelog-scraper']
+        token (str): github token
+        output_dir (str, optional): dir to write changelog files to. Defaults to None.
+
+    Yields:
+        str: changelog url
+    """
     for url in f:
         # url ex:  https://github.com/boto/boto3/
         # clean url
@@ -68,7 +79,7 @@ def print_urls(token, output_dir=None):
         if url.rfind(" unknown") > -1:
             # package requirement parser was unable to find vcs link
             # so we pass unknown through verbatim
-            print(url)
+            yield url
             continue
 
         # for getting file contents if changelog found
@@ -87,18 +98,18 @@ def print_urls(token, output_dir=None):
                 if upper_case_name.startswith(target_file):
                     changelog_found = True
                     raw_url_full = f'{raw_url}/HEAD/{file_name}'
-                    print(raw_url_full)
                     if output_dir:
                         out_dir_full = join(output_dir, org_or_user, repo)
                         # urlretrieve requires path to already exist
                         Path(out_dir_full).mkdir(parents=True, exist_ok=True)
                         sleep(1)  # be nice to API
                         urllib.request.urlretrieve(raw_url_full, join(out_dir_full, 'CHANGELOG.md'))
+                    yield raw_url_full
                     break
             if changelog_found:
                 break
         if not changelog_found:
-            print(f'no changelog found for {url}')
+            yield f'no changelog found for {url}'
         sleep(1)  # be nice to API
 
 
@@ -118,4 +129,4 @@ if __name__ == "__main__":
     parsed_args = parser.parse_args()
     f = parsed_args.filepath  # argparse actually turns filepath into a file for us :D
     verbosity = parsed_args.verbosity
-    print_urls(token=parsed_args.token, output_dir=parsed_args.outputdirectory)
+    [print(url) for url in get_urls(token=parsed_args.token, output_dir=parsed_args.outputdirectory)]
