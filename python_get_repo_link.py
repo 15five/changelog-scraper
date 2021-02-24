@@ -37,28 +37,37 @@ def clean_package_name(package_name: str):
 
 possible_url_names = ['home_page', 'Source', 'Code', 'Homepage']
 
-# We want to be a well-behaved linux utility
-# so we read from either stdin or first arg as file
-f = stdin
-if len(argv) > 1:
-    f = open(argv[1])
 
-for package in f:
-    package = clean_package_name(package)
-    if package == '': continue
-    link = None
-    response = get_pypi_json(package)
-    project_urls = response['info'].get('project_urls', {})
-    if project_urls is None: project_urls = {}
-    if 'home_page' in response['info']:
-        project_urls['home_page'] = response['info']['home_page']
+def get_repo_link(f):
+    """yields a repo link for each package in f
 
-    for url_name in possible_url_names:
-        if url_name in project_urls and 'github.com' in project_urls[url_name]:
-            link = project_urls[url_name]
-            break
-    if link:
-        print(link)
-    else:
-        print(package + ' unknown')
-    sleep(1)  # be nice to API
+    Args:
+        f (TextIO): text stream
+    """
+    for package in f:
+        package = clean_package_name(package)
+        if package == '': continue
+        link = None
+        response = get_pypi_json(package)
+        project_urls = response['info'].get('project_urls', {})
+        if project_urls is None: project_urls = {}
+        if 'home_page' in response['info']:
+            project_urls['home_page'] = response['info']['home_page']
+
+        for url_name in possible_url_names:
+            if url_name in project_urls and 'github.com' in project_urls[url_name]:
+                link = project_urls[url_name]
+                break
+        if link:
+            yield link
+        else:
+            yield package + ' unknown'
+        sleep(1)  # be nice to API
+
+if __name__ == "__main__":
+    # We want to be a well-behaved linux utility
+    # so we read from either stdin or first arg as file
+    f = stdin
+    if len(argv) > 1:
+        f = open(argv[1])
+    [print(package) for package in get_repo_link(f)]
