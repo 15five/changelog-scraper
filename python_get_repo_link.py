@@ -43,7 +43,7 @@ def get_repo_link(f):
     """yields a repo link for each package in f
 
     Args:
-        f (TextIO): text stream
+        f (Iterable[str]): any iterable yielding package names. Ex: ['django']
     """
     for package in f:
         package = clean_package_name(package)
