@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import json
-import urllib.request
+import urllib.request, urllib.parse
 from os.path import join
 from pathlib import Path
 from sys import stdin
@@ -71,23 +71,33 @@ def get_urls(urls, token, output_dir=None):
         url = url.strip().rstrip("/")
         if len(url) == 0:
             continue
-        seperated_url: str = url.split("/")
-        url = "/".join(
-            seperated_url[:5]
-        )  # we don't care about anything after repo name
-
-        changelog_found = False
-
         if url.rfind(" unknown") > -1:
             # package requirement parser was unable to find vcs link
             # so we pass unknown through verbatim
             yield url
             continue
+        parsed_url = urllib.parse.urlparse(url)
+        # we don't care about anything after repo name
+        # ex: "/boto/boto3/blob/main/readme.md" -> ["","boto","boto3"]
+        seperated_path = parsed_url.path.split("/")[:3]
+        new_path = "/".join(seperated_path)
+        url = urllib.parse.urlunparse(
+            (
+                parsed_url.scheme,
+                parsed_url.netloc,
+                new_path,
+                parsed_url.params,
+                parsed_url.query,
+                parsed_url.fragment,
+            )
+        )
+
+        changelog_found = False
 
         # for getting file contents if changelog found
         raw_url = url.replace("github.com", "raw.githubusercontent.com")
-        org_or_user = seperated_url[3]  # ex: boto
-        repo = seperated_url[4]  # ex: boto3
+        org_or_user = seperated_path[1]  # ex: boto
+        repo = seperated_path[2]  # ex: boto3
         root_file_names = get_root_file_names(
             org_or_user=org_or_user, repo=repo, token=token,
         )
