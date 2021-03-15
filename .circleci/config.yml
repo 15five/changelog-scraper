@@ -1,0 +1,80 @@
+version: 2.1
+
+workflows:
+  lint_and_test_pr:
+    jobs:
+      - lint
+      - test-python:
+          name: test-python3.6
+          version: "3.6"
+          requires:
+            - lint
+      - test-python:
+          name: test-python3.7
+          version: "3.7"
+          requires:
+            - lint
+      - test-python:
+          name: test-python3.8
+          version: "3.8"
+          requires:
+            - lint
+jobs:
+  lint:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+      - run:
+          name: install python dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r dev-requirements.pip
+      - save_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+          paths:
+            - "venv"
+      - run:
+          name: lint
+          command: |
+            . venv/bin/activate
+            black --check .
+  test-python:
+    parameters:
+      version:
+        type: string
+        default: latest
+    docker:
+      - image: circleci/python:<< parameters.version >>
+    steps:
+      - checkout
+      - restore_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+      - run:
+          name: install python dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r dev-requirements.pip
+      - save_cache:
+          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+          paths:
+            - "venv"
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            mkdir test-results
+            coverage run --source=. --omit=venv/* -m pytest --junitxml=test-results/junit.xml
+            coverage report -m
+            coverage html
+      - run:
+          name: Compress Artifacts
+          command: tar -cvf htmlcov.tar htmlcov
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov.tar
