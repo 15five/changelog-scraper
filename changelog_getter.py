@@ -54,18 +54,18 @@ def get_root_file_names(org_or_user, repo, token):
         return [entry["name"] for entry in entries if entry["type"] == "blob"]
 
 
-def get_urls(f, token, output_dir=None):
-    """yields a changelog link for each repo link in f
+def get_urls(urls, token, output_dir=None):
+    """yields a changelog link for each repo link in urls
 
     Args:
-        f (Iterable[str]): any iterable yielding repo links. Ex: ['https://github.com/15five/changelog-scraper']
+        urls (Iterable[str]): any iterable yielding repo links. Ex: ['https://github.com/15five/changelog-scraper']
         token (str): github token
         output_dir (str, optional): dir to write changelog files to. Defaults to None.
 
     Yields:
         str: changelog url
     """
-    for url in f:
+    for url in urls:
         # url ex:  https://github.com/boto/boto3/
         # clean url
         url = url.strip().rstrip("/")
