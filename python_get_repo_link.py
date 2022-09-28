@@ -13,7 +13,7 @@ def get_pypi_json(package_name):
 
 def clean_package_name(package_name: str):
     """
-    Simplistic cleaning of a line from a requirement file into a plain package name
+    Simplistic cleaning of a line from a requirement file into a plain package name.
     Does not handle all cases!
     """
     # I should probably replace this w/ https://github.com/davidfischer/requirements-parser
