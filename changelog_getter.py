@@ -99,7 +99,9 @@ def get_urls(urls, token, output_dir=None):
         org_or_user = seperated_path[1]  # ex: boto
         repo = seperated_path[2]  # ex: boto3
         root_file_names = get_root_file_names(
-            org_or_user=org_or_user, repo=repo, token=token,
+            org_or_user=org_or_user,
+            repo=repo,
+            token=token,
         )
         if verbosity > 0:
             print("searching through files: " + str(root_file_names))
