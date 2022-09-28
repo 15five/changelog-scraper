@@ -1,6 +1,7 @@
 import json
-from changelog_getter import get_root_file_names, get_urls
 from unittest import mock
+
+from changelog_getter import get_root_file_names, get_urls
 
 
 def test_passes_unknown_through_verbatim():

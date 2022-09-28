@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import json
-import urllib.request, urllib.parse
+import urllib.parse
+import urllib.request
 from os.path import join
 from pathlib import Path
 from sys import stdin

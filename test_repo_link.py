@@ -1,6 +1,7 @@
 import json
-from python_get_repo_link import clean_package_name, get_repo_link
 from unittest import mock
+
+from python_get_repo_link import clean_package_name, get_repo_link
 
 
 def test_clean_package_name():
