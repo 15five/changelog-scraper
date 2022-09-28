@@ -30,7 +30,7 @@ def clean_package_name(package_name: str):
     return clean_name.strip()
 
 
-possible_url_names = ["home_page", "source", "code", "homepage"]
+POSSIBLE_URL_NAMES = ["home_page", "source", "code", "homepage"]
 # KEEP ABOVE LOWERCASE
 
 
@@ -56,7 +56,7 @@ def get_repo_link(f: Iterable[str]):
         # thanks to https://stackoverflow.com/a/764244/6629672
         project_urls = dict((k.lower(), v) for k, v in project_urls.items())
 
-        for url_name in possible_url_names:
+        for url_name in POSSIBLE_URL_NAMES:
             if url_name in project_urls and "github.com" in project_urls[url_name]:
                 link = project_urls[url_name]
                 break
