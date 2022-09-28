@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import json
-import re
 from sys import argv, stdin
 from time import sleep
+from typing import Iterable
 from urllib.request import urlopen
 
 
@@ -34,11 +34,11 @@ possible_url_names = ["home_page", "source", "code", "homepage"]
 # KEEP ABOVE LOWERCASE
 
 
-def get_repo_link(f):
+def get_repo_link(f: Iterable[str]):
     """yields a repo link for each package in f
 
     Args:
-        f (Iterable[str]): any iterable yielding package names. Ex: ['django']
+        f: any iterable yielding package names. Ex: ['django']
     """
     for package in f:
         package = clean_package_name(package)
