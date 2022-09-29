@@ -154,6 +154,6 @@ if __name__ == "__main__":
     [
         print(url)
         for url in get_urls(
-            token=parsed_args.token, output_dir=parsed_args.outputdirectory
+            f, token=parsed_args.token, output_dir=parsed_args.outputdirectory
         )
     ]
