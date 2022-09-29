@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import json
-from sys import argv, stdin, stderr
+from sys import argv, stderr, stdin
 from time import sleep
-from typing import Iterable
+from typing import Dict, Iterable
 from urllib.request import urlopen
 
 
-def get_pypi_json(package_name):
+def get_pypi_json(package_name: str) -> Dict:
     with urlopen(f"https://pypi.org/pypi/{package_name}/json") as u:
         return json.loads(u.read().decode())
 
@@ -54,8 +54,10 @@ def get_repo_link(f: Iterable[str]):
                 project_urls["home_page"] = response["info"]["home_page"]
 
             # make sure we are in lowercase for case-insensitive comparison
-            # thanks to https://stackoverflow.com/a/764244/6629672
-            project_urls = dict((k.lower(), v) for k, v in project_urls.items())
+            # Also remove useless None urls to avoid TypeError later on
+            project_urls: Dict[str, str] = {
+                k.lower(): v for k, v in project_urls.items() if v is not None
+            }
 
             for url_name in POSSIBLE_URL_NAMES:
                 if url_name in project_urls and "github.com" in project_urls[url_name]:
