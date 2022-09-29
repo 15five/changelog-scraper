@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import json
-from sys import argv, stdin
+from sys import argv, stdin, stderr
 from time import sleep
 from typing import Iterable
 from urllib.request import urlopen
@@ -41,29 +41,33 @@ def get_repo_link(f: Iterable[str]):
         f: any iterable yielding package names. Ex: ['django']
     """
     for package in f:
-        package = clean_package_name(package)
-        if package == "":
-            continue
-        link = None
-        response = get_pypi_json(package)
-        project_urls = response["info"].get("project_urls", {})
-        if project_urls is None:
-            project_urls = {}
-        if "home_page" in response["info"]:
-            project_urls["home_page"] = response["info"]["home_page"]
+        try:
+            package = clean_package_name(package)
+            if package == "":
+                continue
+            link = None
+            response = get_pypi_json(package)
+            project_urls = response["info"].get("project_urls", {})
+            if project_urls is None:
+                project_urls = {}
+            if "home_page" in response["info"]:
+                project_urls["home_page"] = response["info"]["home_page"]
 
-        # make sure we are in lowercase for case-insensitive comparison
-        # thanks to https://stackoverflow.com/a/764244/6629672
-        project_urls = dict((k.lower(), v) for k, v in project_urls.items())
+            # make sure we are in lowercase for case-insensitive comparison
+            # thanks to https://stackoverflow.com/a/764244/6629672
+            project_urls = dict((k.lower(), v) for k, v in project_urls.items())
 
-        for url_name in POSSIBLE_URL_NAMES:
-            if url_name in project_urls and "github.com" in project_urls[url_name]:
-                link = project_urls[url_name]
-                break
-        if link:
-            yield link
-        else:
-            yield package + " unknown"
+            for url_name in POSSIBLE_URL_NAMES:
+                if url_name in project_urls and "github.com" in project_urls[url_name]:
+                    link = project_urls[url_name]
+                    break
+            if link:
+                yield link
+            else:
+                yield package + " unknown"
+        except Exception:
+            stderr.write(f"package {package} ran into an error:\n")
+            raise
         sleep(1)  # be nice to API
 
 
