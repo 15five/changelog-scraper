@@ -30,7 +30,7 @@ def clean_package_name(package_name: str):
     return clean_name.strip()
 
 
-POSSIBLE_URL_NAMES = ["home_page", "source", "code", "homepage"]
+POSSIBLE_URL_NAMES = ["home_page", "source", "code", "homepage", "source code"]
 # KEEP ABOVE LOWERCASE
 
 
