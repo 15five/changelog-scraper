@@ -5,11 +5,6 @@ workflows:
     jobs:
       - lint
       - test-python:
-          name: test-python3.6
-          version: "3.6"
-          requires:
-            - lint
-      - test-python:
           name: test-python3.7
           version: "3.7"
           requires:
@@ -19,10 +14,20 @@ workflows:
           version: "3.8"
           requires:
             - lint
+      - test-python:
+          name: test-python3.9
+          version: "3.9"
+          requires:
+            - lint
+      - test-python:
+          name: test-python3.10
+          version: "3.10"
+          requires:
+            - lint
 jobs:
   lint:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
     steps:
       - checkout
       - restore_cache:
@@ -48,11 +53,11 @@ jobs:
         type: string
         default: latest
     docker:
-      - image: circleci/python:<< parameters.version >>
+      - image: cimg/python:<< parameters.version >>
     steps:
       - checkout
       - restore_cache:
-          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+          key: v2-dep-cache-<< parameters.version >>-{{ checksum "dev-requirements.pip" }}
       - run:
           name: install python dependencies
           command: |
@@ -60,7 +65,7 @@ jobs:
             . venv/bin/activate
             pip install -r dev-requirements.pip
       - save_cache:
-          key: v2-dep-cache-3.7-{{ checksum "dev-requirements.pip" }}
+          key: v2-dep-cache-<< parameters.version >>-{{ checksum "dev-requirements.pip" }}
           paths:
             - "venv"
       - run:

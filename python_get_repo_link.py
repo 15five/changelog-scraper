@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 import json
-import re
-from sys import argv, stdin
+from sys import argv, stderr, stdin
 from time import sleep
+from typing import Dict, Iterable
 from urllib.request import urlopen
 
 
-def get_pypi_json(package_name):
+def get_pypi_json(package_name: str) -> Dict:
     with urlopen(f"https://pypi.org/pypi/{package_name}/json") as u:
         return json.loads(u.read().decode())
 
 
 def clean_package_name(package_name: str):
     """
-    Simplistic cleaning of a line from a requirement file into a plain package name
+    Simplistic cleaning of a line from a requirement file into a plain package name.
     Does not handle all cases!
     """
     # I should probably replace this w/ https://github.com/davidfischer/requirements-parser
@@ -30,40 +30,46 @@ def clean_package_name(package_name: str):
     return clean_name.strip()
 
 
-possible_url_names = ["home_page", "source", "code", "homepage"]
+POSSIBLE_URL_NAMES = ["home_page", "source", "code", "homepage", "source code"]
 # KEEP ABOVE LOWERCASE
 
 
-def get_repo_link(f):
+def get_repo_link(f: Iterable[str]):
     """yields a repo link for each package in f
 
     Args:
-        f (Iterable[str]): any iterable yielding package names. Ex: ['django']
+        f: any iterable yielding package names. Ex: ['django']
     """
     for package in f:
-        package = clean_package_name(package)
-        if package == "":
-            continue
-        link = None
-        response = get_pypi_json(package)
-        project_urls = response["info"].get("project_urls", {})
-        if project_urls is None:
-            project_urls = {}
-        if "home_page" in response["info"]:
-            project_urls["home_page"] = response["info"]["home_page"]
+        try:
+            package = clean_package_name(package)
+            if package == "":
+                continue
+            link = None
+            response = get_pypi_json(package)
+            project_urls = response["info"].get("project_urls", {})
+            if project_urls is None:
+                project_urls = {}
+            if "home_page" in response["info"]:
+                project_urls["home_page"] = response["info"]["home_page"]
 
-        # make sure we are in lowercase for case-insensitive comparison
-        # thanks to https://stackoverflow.com/a/764244/6629672
-        project_urls = dict((k.lower(), v) for k, v in project_urls.items())
+            # make sure we are in lowercase for case-insensitive comparison
+            # Also remove useless None urls to avoid TypeError later on
+            project_urls: Dict[str, str] = {
+                k.lower(): v for k, v in project_urls.items() if v is not None
+            }
 
-        for url_name in possible_url_names:
-            if url_name in project_urls and "github.com" in project_urls[url_name]:
-                link = project_urls[url_name]
-                break
-        if link:
-            yield link
-        else:
-            yield package + " unknown"
+            for url_name in POSSIBLE_URL_NAMES:
+                if url_name in project_urls and "github.com" in project_urls[url_name]:
+                    link = project_urls[url_name]
+                    break
+            if link:
+                yield link
+            else:
+                yield package + " unknown"
+        except Exception:
+            stderr.write(f"package {package} ran into an error:\n")
+            raise
         sleep(1)  # be nice to API
 
 
